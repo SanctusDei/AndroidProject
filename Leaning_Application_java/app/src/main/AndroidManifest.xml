@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Leaning_Application_java"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".DynamicFragmentActivity"
+            android:exported="false" />
+        <activity
             android:name=".StaticFragmentActivity"
             android:exported="false" />
         <activity

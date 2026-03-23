@@ -12,7 +12,7 @@ import com.example.leaning_application_java.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link StaticFragment#newInstance} factory method to
+ * Use the {@link StaticFragment#} factory method to
  * create an instance of this fragment.
  */
 public class StaticFragment extends Fragment {

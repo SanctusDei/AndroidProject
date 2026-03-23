@@ -9,15 +9,23 @@
     tools:context=".StaticFragmentActivity">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        tools:ignore="MissingConstraints">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="简介:使用静态方法来加载Fragment。步骤：1. 定义Fragment的xml布局文件 2. 创建Fragment的实例 3. Activity调用setContentView() 来加载布局文件"
             />
+
+        <fragment
+            android:id="@+id/staticfragment"
+            android:name="Fragment.StaticFragment"
+            android:layout_width="match_parent"
+            android:layout_height="227dp"
+            android:layout_weight="1" />
 
 
     </LinearLayout>

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity  {
         items.add(new MenuItem("3.Volley",VolleyActivity.class));
         items.add(new MenuItem("4.DialogFragment", DialogFragmengActivity.class));
         items.add(new MenuItem("5.StaticFragment", StaticFragmentActivity.class));
+        items.add(new MenuItem("6.DynamicFragment", DynamicFragmentActivity.class));
 
         MenuAdapter adapter = new MenuAdapter(items);
         rv.setAdapter(adapter);

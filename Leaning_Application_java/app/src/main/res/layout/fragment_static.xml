@@ -8,6 +8,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/static_fragment" />
-
+        android:text="@string/static_fragment"
+        android:textColor="@color/design_default_color_primary"
+        android:gravity="center"
+        android:textSize="20sp"
+        />
 </FrameLayout>
