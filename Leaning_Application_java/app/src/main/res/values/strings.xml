@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Android学习</string>
+
+    <string name="tab_intensity">光强 (Intensity)</string>
+    <string name="tab_absorbance">吸光度 (Absorbance)</string>
+    <string name="tab_reflectance">反射率 (Reflectance)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="static_fragment"></string>
+</resources>
