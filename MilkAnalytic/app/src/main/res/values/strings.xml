@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">牛奶成分分析APP</string>
+    <string name="menu_search">搜索</string>
+    <string name="menu_notifications">通知</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_feedback">反馈</string>
+</resources>
