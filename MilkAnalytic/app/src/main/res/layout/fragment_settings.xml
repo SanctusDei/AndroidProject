@@ -1,13 +1,270 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragment.SettingsFragment">
+    android:background="#F8FAFC">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="settingsFragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置"
+            android:textColor="#1E293B"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="管理您的应用偏好设置"
+            android:textColor="#64748B"
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#F1F5F9"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:backgroundTint="#DBEAFE"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_bell"
+                        app:tint="#2563EB" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="通知设置"
+                            android:textColor="#1E293B"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="管理应用通知偏好"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/sw_analysis"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="分析完成通知" android:textColor="#1E293B" android:textSize="14sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="分析完成时接收通知" android:textColor="#94A3B8" android:textSize="12sp" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/sw_analysis" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/sw_quality"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="质量警报" android:textColor="#1E293B" android:textSize="14sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="检测到质量问题时提醒" android:textColor="#94A3B8" android:textSize="12sp" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/sw_quality" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/sw_weekly"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="周报提醒" android:textColor="#1E293B" android:textSize="14sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="每周发送检测汇总报告" android:textColor="#94A3B8" android:textSize="12sp" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/sw_weekly" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#F1F5F9"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" android:gravity="center_vertical">
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle" android:backgroundTint="#F3E8FF" android:padding="10dp" android:src="@drawable/ic_palette" app:tint="#9333EA" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="显示设置" android:textColor="#1E293B" android:textSize="16sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="自定义界面外观" android:textColor="#64748B" android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="主题" android:textColor="#1E293B" android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <AutoCompleteTextView android:id="@+id/select_theme" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="图表样式" android:textColor="#1E293B" android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <AutoCompleteTextView android:id="@+id/select_chart_style" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#F1F5F9"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" android:gravity="center_vertical">
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle" android:backgroundTint="#DCFCE7" android:padding="10dp" android:src="@drawable/ic_globe" app:tint="#16A34A" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="语言设置" android:textColor="#1E293B" android:textSize="16sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="选择界面显示语言" android:textColor="#64748B" android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:text="语言" android:textColor="#1E293B" android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <AutoCompleteTextView android:id="@+id/select_language" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#F1F5F9"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" android:gravity="center_vertical">
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle" android:backgroundTint="#FFEDD5" android:padding="10dp" android:src="@drawable/ic_database" app:tint="#EA580C" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="数据管理" android:textColor="#1E293B" android:textSize="16sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="管理应用数据" android:textColor="#64748B" android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_export_data" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginBottom="12dp" android:text="导出历史数据" android:textAlignment="viewStart" android:textColor="#1E293B" app:cornerRadius="12dp" app:strokeColor="#E2E8F0" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_clear_cache" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginBottom="12dp" android:text="清除缓存" android:textAlignment="viewStart" android:textColor="#1E293B" app:cornerRadius="12dp" app:strokeColor="#E2E8F0" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_delete_all" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="56dp" android:text="删除所有数据" android:textAlignment="viewStart" android:textColor="#EF4444" app:cornerRadius="12dp" app:strokeColor="#FEE2E2" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#F1F5F9"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" android:gravity="center_vertical">
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle" android:backgroundTint="#F3F4F6" android:padding="10dp" android:src="@drawable/ic_info" app:tint="#4B5563" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="关于" android:textColor="#1E293B" android:textSize="16sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="应用信息" android:textColor="#64748B" android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="版本" android:textColor="#64748B" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1.0.0" android:textColor="#1E293B" android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="更新日期" android:textColor="#64748B" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2026-03-24" android:textColor="#1E293B" android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="开发商" android:textColor="#64748B" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="牛奶分析实验室" android:textColor="#1E293B" android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
