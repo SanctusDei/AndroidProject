@@ -1,13 +1,216 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragment.AnalysisFragment">
+    android:background="#F9FAFB">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="analysisFragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</FrameLayout>
+        <include
+            android:id="@+id/layout_device_status"
+            layout="@layout/layout_device_connection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="样品信息"
+                    android:textColor="#111827"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="样品名称 *"
+                    android:textColor="#374151"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_sample_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_flat_input"
+                    android:hint="例如：全脂牛奶批次A001"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#1F2937"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="12dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="批次号"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_sample_batch"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_flat_input"
+                            android:hint="批次号"
+                            android:paddingHorizontal="16dp"
+                            android:textColor="#1F2937"
+                            android:textColorHint="#94A3B8" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="生产日期"
+                            android:textColor="#374151"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_production_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_flat_input"
+                            android:hint="2026/03/25"
+                            android:drawableEnd="@drawable/ic_calendar_clear"
+                            android:drawablePadding="8dp"
+                            android:paddingHorizontal="16dp"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:textColor="#1F2937"
+                            android:textColorHint="#94A3B8" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_start_scan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:backgroundTint="#030712"
+                        android:text="模拟扫描"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_sparkles"
+                        app:iconGravity="textStart"
+                        app:iconSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/tv_hint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="未连接设备，将使用模拟数据"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/layout_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <include
+                    android:id="@+id/qualityMeterLayout"
+                    layout="@layout/layout_quality_meter" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_components"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <com.github.mikephil.charting.charts.RadarChart
+                android:id="@+id/radar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:id="@+id/container_suggestions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="分析建议"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

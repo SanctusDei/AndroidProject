@@ -1,13 +1,37 @@
-    <resources xmlns:tools="http://schemas.android.com/tools">
-        <style name="Theme.MilkAnalytic" parent="Theme.Material3.DayNight.NoActionBar">
-            <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
-        </style>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-        <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-            <item name="rippleColor">@android:color/transparent</item>
-            <item name="itemRippleColor">@android:color/transparent</item>
+    <style name="Theme.MilkAnalytic" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-            <item name="indicatorColor">@android:color/transparent</item>
-        </style>
+        <item name="colorPrimary">#030712</item>
+        <item name="colorPrimaryVariant">#000000</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
 
-    </resources>
+        <item name="android:windowBackground">#F9FAFB</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1F2937</item>
+
+        <item name="colorControlHighlight">@android:color/transparent</item>
+
+        <item name="materialCalendarTheme">@style/Widget.App.DatePicker</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+
+    <style name="Widget.App.DatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorPrimary">#030712</item> <item name="colorSurface">#FFFFFF</item> <item name="colorOnSurface">#1F2937</item> <item name="colorAccent">#030712</item>   <item name="colorOnPrimary">#FFFFFF</item> <item name="colorControlHighlight">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemRippleColor">@android:color/transparent</item>
+        <item name="android:colorControlHighlight">@android:color/transparent</item>
+
+        <item name="android:background">@android:color/white</item>
+        <item name="itemIconTint">@color/nav_item_color_state</item>
+        <item name="itemTextColor">@color/nav_item_color_state</item>
+
+        <item name="itemActiveIndicatorStyle">@null</item>
+
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemHorizontalTranslationEnabled">false</item>
+    </style>
+
+</resources>

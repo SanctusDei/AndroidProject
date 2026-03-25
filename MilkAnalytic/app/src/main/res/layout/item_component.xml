@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tv_comp_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="蛋白质"
+            android:textColor="#6B7280"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_comp_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="3.25"
+            android:textColor="#111827"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_comp_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="g/100ml"
+            android:textColor="#9CA3AF"
+            android:textSize="10sp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
