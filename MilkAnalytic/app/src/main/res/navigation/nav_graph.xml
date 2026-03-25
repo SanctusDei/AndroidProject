@@ -3,35 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/nav_home">
 
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/nav_home"
         android:name="fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
         <action
             android:id="@+id/action_home_to_analysis"
-            app:destination="@+id/analysisFragment" />
+            app:destination="@+id/nav_analytic" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/analysisFragment"
+        android:id="@+id/nav_analytic"
         android:name="fragment.AnalysisFragment"
         android:label="fragment_analysis"
         tools:layout="@layout/fragment_analysis" />
 
     <fragment
-        android:id="@+id/historyFragment"
+        android:id="@+id/nav_history"
         android:name="fragment.HistoryFragment"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history" />
 
     <fragment
-        android:id="@+id/settingingsFragment"
+        android:id="@+id/nav_settings"
         android:name="fragment.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
