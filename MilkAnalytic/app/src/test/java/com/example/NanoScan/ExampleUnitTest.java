@@ -1,4 +1,4 @@
-package com.example.milkanalytic;
+package com.example.NanoScan;
 
 import org.junit.Test;
 

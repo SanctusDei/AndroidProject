@@ -13,7 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.milkanalytic.R;
+import com.ubi.NanoScan.R;
 
 import java.util.ArrayList;
 import java.util.List;

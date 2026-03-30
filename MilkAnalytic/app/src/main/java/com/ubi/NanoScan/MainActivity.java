@@ -1,5 +1,6 @@
-package com.example.milkanalytic;
+package com.ubi.NanoScan;
 
+import android.Manifest;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -105,6 +107,20 @@ public class MainActivity extends AppCompatActivity {
                 }
                 bottomNav.removeBadge(itemId);
             }
+        }
+    }
+
+    private void checkBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissions(new String[] {
+                    Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_FINE_LOCATION},100);
+        } else {
+
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            },100);
         }
     }
 }

@@ -20,6 +20,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' } // 必须加上这一行
+        flatDir {
+            dirs 'app/libs'
+        }
     }
 }
 

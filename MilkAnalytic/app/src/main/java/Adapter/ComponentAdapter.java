@@ -4,7 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.milkanalytic.databinding.ItemComponentBinding;
+import com.ubi.NanoScan.databinding.ItemComponentBinding;
 import java.util.List;
 
 public class ComponentAdapter extends RecyclerView.Adapter<ComponentAdapter.ViewHolder> {

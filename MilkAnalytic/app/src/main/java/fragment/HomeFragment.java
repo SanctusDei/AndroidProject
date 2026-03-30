@@ -7,14 +7,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.milkanalytic.R;
-import com.example.milkanalytic.databinding.FragmentHomeBinding;
+import com.ubi.NanoScan.R;
+import com.ubi.NanoScan.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 

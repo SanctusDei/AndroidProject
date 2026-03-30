@@ -13,8 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.milkanalytic.R;
-import com.example.milkanalytic.databinding.FragmentHistoryBinding;
+import com.ubi.NanoScan.R;
+import com.ubi.NanoScan.databinding.FragmentHistoryBinding;
 
 import java.util.ArrayList;
 import java.util.List;
