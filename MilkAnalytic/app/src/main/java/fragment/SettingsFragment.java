@@ -84,6 +84,7 @@ public class SettingsFragment extends Fragment {
         binding.swWeekly.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // TODO: 保存周报提醒偏好
         });
+
     }
 
     private void handleClearCache() {

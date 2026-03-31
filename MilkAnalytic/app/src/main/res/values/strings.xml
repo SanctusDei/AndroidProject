@@ -121,8 +121,8 @@
 
     <string name="delete">Delete</string>
     <string name="ok">OK</string>
-    <string name="not_connected_title">Not Connected</string>
-    <string name="not_connected_message">Ensure Bluetooth is powered on your Android device and your Nano, then tap the Scan button on the main view.</string>
+    <string name="not_connected_title">设备未连接</string>
+    <string name="not_connected_message">请确保您的 Android 设备和 Nano 的蓝牙均已开启，然后点击主界面上的“扫描”按钮。</string>
 
     <string name="battery">Battery</string>
     <string name="humidity">Humidity</string>
@@ -197,10 +197,10 @@
     <string name="send_mail">"Send mail…"</string>
     <string name="no_email_clients">There are no email clients installed.</string>
     <string name="update_thresholds">Update Thresholds</string>
-    <string name="scanning">Scanning…</string>
+    <string name="scanning">扫描中…</string>
 
-    <string name="dl_ref_cal">Downloading Ref Cal</string>
-    <string name="dl_cal_matrix">Downloading Cal Matrix</string>
+    <string name="dl_ref_cal">正在下载校准系数</string>
+    <string name="dl_cal_matrix">正在下载校准矩阵</string>
     <string name="select_nano">Select Nano</string>
     <string name="nano_confirmation_title">Are You Sure?</string>
     <string name="nano_confirmation_msg">Are you sure you want set the Nano with MAC address: %1$s, as your primary device?</string>
@@ -214,4 +214,18 @@
 
 
     <string name="api_all_apps">http://172.22.98.184:18000/api/all_apps/</string>
+    <!--  AnalysisFragment  -->
+
+    <string name="analysis_scan">开始扫描</string>
+    <string name="analysis_hint_disconnect">未连接设备，无法进行扫描</string>
+    <string name="analysis_hint_connected">已连接设备，可以进行扫描</string>
+    <string name="analysis_ble_connected">已连接</string>
+    <string name="analysis_ble_disconnected">未连接</string>
+    <string name="analysis_ble_connecting">正在连接...</string>
+    <string name="analysis_ble_click2connect">连接设备</string>
+    <string name="analysis_ble_searching">搜索中...</string>
+    <string name="analysis_ble_prefer_searching">搜索首选设备...</string>
+    <string name="analysis_scan_analysising">分析中...</string>
+
+
 </resources>

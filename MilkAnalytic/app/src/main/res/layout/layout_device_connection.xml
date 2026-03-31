@@ -153,14 +153,14 @@
             android:layout_marginBottom="12dp"
             android:text="连接说明"
             android:textColor="#2563EB"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="6dp"
-            android:text="• 确保NIRScan设备已开机并处于配对模式\n• 设备应在蓝牙范围内 (约10米)\n• 首次连接需要授权蓝牙访问权限\n• 或使用&quot;模拟扫描&quot;功能进行测试"
+            android:text="\n• 确保NIRScan设备已开机并处于配对模式\n• 设备应在蓝牙范围内 (约10米)\n• 首次连接需要授权蓝牙访问权限\n"
             android:textColor="#2563EB"
             android:textSize="13sp" />
     </LinearLayout>

@@ -50,7 +50,7 @@ import utils.ComponentItem;
 
 public class AnalysisFragment extends Fragment {
 
-    private static final String TAG = "UbiNIRS_Analysis";
+    private static final String TAG = "AnalysisFragment";
     private static final String DEVICE_NAME = "NIRScanNano";
 
     private FragmentAnalysisBinding binding;
@@ -77,7 +77,7 @@ public class AnalysisFragment extends Fragment {
     private final BroadcastReceiver disconnReceiver = new DisconnReceiver();
     private final BroadcastReceiver scanConfReceiver = new ScanConfReceiver();
 
-    // --- 生命周期：创建与绑定 ---
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,10 +126,16 @@ public class AnalysisFragment extends Fragment {
         });
 
         binding.layoutDeviceStatus.btnConnectBle.setOnClickListener(v -> {
-            if (mNanoBLEService != null && preferredDevice != null) {
-                mNanoBLEService.connect(preferredDevice);
+            if (mNanoBLEService != null) {
+
+                if (preferredDevice != null) {
+                    mNanoBLEService.connect(preferredDevice);
+                    connected = true;
+                } else {
+                    scanLeDevice(true);
+                }
             } else {
-                scanLeDevice(true);
+                Toast.makeText(mContext, "服务正在启动，请稍后", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -137,8 +143,6 @@ public class AnalysisFragment extends Fragment {
 
     public class scanDataReadyReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-
-            binding.btnStartScan.setText("开始分析");
 
             byte[] scanData = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_DATA);
             if (scanData == null) return;
@@ -234,6 +238,7 @@ public class AnalysisFragment extends Fragment {
                 barProgressDialog.setMax(sizeVal);
                 barProgressDialog.setCancelable(false);
                 barProgressDialog.show();
+
             } else {
                 if (barProgressDialog != null) {
                     barProgressDialog.setProgress(barProgressDialog.getProgress() + sizeVal);
@@ -262,8 +267,10 @@ public class AnalysisFragment extends Fragment {
             // 官方逻辑：在这里彻底唤醒按钮
             binding.btnStartScan.setEnabled(true);
             binding.btnStartScan.setClickable(true);
+            binding.tvHint.setText(getString(R.string.analysis_hint_connected));
             binding.btnStartScan.setBackgroundColor(ContextCompat.getColor(mContext, R.color.kst_red));
-            binding.layoutDeviceStatus.btnConnectBle.setText("已连接");
+            binding.layoutDeviceStatus.btnConnectBle.setBackgroundColor(ContextCompat.getColor(mContext,R.color.kst_red));
+            binding.layoutDeviceStatus.btnConnectBle.setText(getString(R.string.analysis_ble_connected));
 
             Log.d(TAG, "设备全链路初始化完毕，按钮已激活！");
         }
@@ -275,12 +282,12 @@ public class AnalysisFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(mContext, R.string.nano_disconnected, Toast.LENGTH_SHORT).show();
             binding.btnStartScan.setEnabled(false);
-            binding.layoutDeviceStatus.btnConnectBle.setText("点击连接");
+            binding.layoutDeviceStatus.btnConnectBle.setText(R.string.analysis_ble_click2connect);
             connected = false;
         }
     }
 
-    // ================== 服务与蓝牙管理 ==================
+
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -295,11 +302,12 @@ public class AnalysisFragment extends Fragment {
             mBluetoothAdapter = bluetoothManager.getAdapter();
             mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
 
-            if (preferredDevice != null) {
-                scanPreferredLeDevice(true);
-            } else {
-                scanLeDevice(true);
-            }
+              // 自动触发蓝牙搜索
+//            if (preferredDevice != null) {
+//                scanPreferredLeDevice(true);
+//            } else {
+//                scanLeDevice(true);
+//            }
         }
 
         @Override
@@ -310,10 +318,13 @@ public class AnalysisFragment extends Fragment {
     @SuppressLint("Missingpermission")
     private void scanLeDevice(final boolean enable) {
         if (enable && mBluetoothLeScanner != null) {
-            binding.layoutDeviceStatus.btnConnectBle.setText("搜索中...");
+            binding.layoutDeviceStatus.btnConnectBle.setText(R.string.analysis_ble_searching);
             mHandler.postDelayed(() -> {
                 mBluetoothLeScanner.stopScan(mLeScanCallback);
-                if (!connected) notConnectedDialog();
+                if (!connected) {
+                    binding.layoutDeviceStatus.btnConnectBle.setText(R.string.analysis_ble_click2connect);
+                    notConnectedDialog();
+                };
             }, NanoBLEService.SCAN_PERIOD);
             mBluetoothLeScanner.startScan(mLeScanCallback);
         } else if (mBluetoothLeScanner != null) {
@@ -323,7 +334,7 @@ public class AnalysisFragment extends Fragment {
     @SuppressLint("Missingpermission")
     private void scanPreferredLeDevice(final boolean enable) {
         if (enable && mBluetoothLeScanner != null) {
-            binding.layoutDeviceStatus.btnConnectBle.setText("搜索首选设备...");
+            binding.layoutDeviceStatus.btnConnectBle.setText(R.string.analysis_ble_prefer_searching);
             mHandler.postDelayed(() -> {
                 mBluetoothLeScanner.stopScan(mPreferredLeScanCallback);
                 if (!connected) scanLeDevice(true);
@@ -405,7 +416,6 @@ public class AnalysisFragment extends Fragment {
         binding = null;
     }
 
-    // ================== 安全取值防护盾 ==================
 
     private int getSafeInt(Intent intent, String key, int defaultValue) {
         Bundle bundle = intent.getExtras();
@@ -424,7 +434,7 @@ public class AnalysisFragment extends Fragment {
 
     private void startAnalysisLogic() {
         binding.btnStartScan.setEnabled(false);
-        binding.btnStartScan.setText("分析中...");
+        binding.btnStartScan.setText(R.string.analysis_scan_analysising);
         mHandler.postDelayed(() -> {
             if (binding == null) return;
             binding.layoutResults.setVisibility(View.VISIBLE);
@@ -437,7 +447,7 @@ public class AnalysisFragment extends Fragment {
             binding.rvComponents.setAdapter(new ComponentAdapter(items));
 
             binding.btnStartScan.setEnabled(true);
-            binding.btnStartScan.setText("开始分析");
+            binding.btnStartScan.setText(getString(R.string.analysis_scan));
 
         }, 1500);
     }
