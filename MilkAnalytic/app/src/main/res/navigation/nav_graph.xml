@@ -4,7 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/nav_home">
-
+    <action
+        android:id="@+id/action_history_to_detail"
+        app:destination="@id/spectrumDetailFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
 
     <fragment
         android:id="@+id/nav_home"
@@ -30,5 +36,15 @@
         android:name="fragment.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/spectrumDetailFragment"
+        android:name="fragment.SpectrumDetailFragment"
+        android:label="光谱详情"
+        tools:layout="@layout/fragment_spectrum_detail">
+        <argument
+            android:name="record_id"
+            app:argType="integer" />
+    </fragment>
         
 </navigation>

@@ -278,7 +278,7 @@ public class AnalysisFragment extends Fragment {
 
             if (barProgressDialog != null) barProgressDialog.dismiss();
 
-            // 官方逻辑：在这里彻底唤醒按钮
+            // 在这里彻底唤醒按钮
             binding.btnStartScan.setEnabled(true);
             binding.btnStartScan.setClickable(true);
             binding.tvHint.setText(getString(R.string.analysis_hint_connected));

@@ -22,6 +22,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public HistoryAdapter(List<HistoryRecord> records) {
         this.records = records;
     }
+    public interface OnItemClickListener {
+        void onItemClick(HistoryRecord record);
+    }
+
+    private OnItemClickListener listener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public void setRecords(List<HistoryRecord> records) {
         this.records = records;
@@ -50,6 +58,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.tvCalcium.setText(String.format(Locale.getDefault(), "%.0fmg", record.calcium));
 
         holder.tvScore.setText(String.valueOf(record.score));
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(record);
+            }
+        });
 
         // 根据评分动态设置颜色 (例如：>=90 为绿色，<90 为橙色)
         if (record.score >= 90) {
