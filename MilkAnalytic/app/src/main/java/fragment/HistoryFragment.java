@@ -1,20 +1,25 @@
 package fragment;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.ubi.NanoScan.R;
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.ubi.NanoScan.databinding.FragmentHistoryBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +34,7 @@ public class HistoryFragment extends Fragment {
     private List<HistoryRecord> allRecords = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHistoryBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -39,16 +44,14 @@ public class HistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // 1. 初始化 RecyclerView
-        adapter = new HistoryAdapter();
+        adapter = new HistoryAdapter(new ArrayList<>());
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        // 2. 加载模拟数据
-        loadDummyData();
-        updateStatistics(); // 统计不受搜索影响
-        adapter.setRecords(allRecords);
+        // 2. 从 Django 后端拉取真实数据
+        fetchHistoryData();
 
-        // 3. 监听搜索框输入
+        // 3. 监听搜索框输入 (保持你的完美逻辑不变)
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -59,6 +62,46 @@ public class HistoryFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void fetchHistoryData() {
+        // 确保 IP 和端口与你 Django 运行的一致
+        String url = "http://172.22.98.184:18000/api/history/";
+
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET, url, null,
+                response -> {
+                    allRecords.clear();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject obj = response.getJSONObject(i);
+                            allRecords.add(HistoryRecord.fromJson(obj));
+                        }
+
+                        // 首次加载刷新列表
+                        adapter.setRecords(allRecords);
+                        updateStatistics();
+
+                        // 处理空状态 UI
+                        if (allRecords.isEmpty()) {
+                            binding.recyclerView.setVisibility(View.GONE);
+                            binding.layoutEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.recyclerView.setVisibility(View.VISIBLE);
+                            binding.layoutEmpty.setVisibility(View.GONE);
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e("History_JSON", "解析异常: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    Log.e("History_Volley", "请求失败: " + error.toString());
+                    // 失败时也可以展示空状态或 Toast 提示
+                }
+        );
+
+        Volley.newRequestQueue(requireContext()).add(request);
     }
 
     private void filterData(String query) {
@@ -104,9 +147,9 @@ public class HistoryFragment extends Fragment {
         binding.tvExcellentRate.setText(String.format(Locale.getDefault(), "%d%%", (excellentCount * 100) / totalCount));
     }
 
-    private void loadDummyData() {
-        allRecords.add(new HistoryRecord(1, "全脂牛奶 A", "2026-03-24", "14:30", "A001", 95, 3.2, 3.8, 120, "up"));
-        allRecords.add(new HistoryRecord(2, "低脂牛奶 B", "2026-03-23", "10:15", "B002", 88, 3.0, 1.5, 115, "stable"));
-        // ... (添加剩余假数据)
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // 防止内存泄漏
     }
 }
