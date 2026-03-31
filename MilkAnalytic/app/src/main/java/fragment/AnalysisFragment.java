@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,11 +36,19 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.kstechnologies.nirscannanolibrary.KSTNanoSDK;
 import com.kstechnologies.nirscannanolibrary.SettingsManager;
 import com.ubi.NanoScan.NanoBLEService;
 import com.ubi.NanoScan.R;
 import com.ubi.NanoScan.databinding.FragmentAnalysisBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +85,9 @@ public class AnalysisFragment extends Fragment {
     private final BroadcastReceiver requestCalMatrixReceiver = new requestCalMatrixReceiver();
     private final BroadcastReceiver disconnReceiver = new DisconnReceiver();
     private final BroadcastReceiver scanConfReceiver = new ScanConfReceiver();
+
+    // Volley 请求
+    private RequestQueue mQueue;
 
 
     @Override
@@ -144,6 +156,7 @@ public class AnalysisFragment extends Fragment {
     public class scanDataReadyReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
 
+            // 1.获取原始字节流
             byte[] scanData = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_DATA);
             if (scanData == null) return;
 
@@ -156,8 +169,9 @@ public class AnalysisFragment extends Fragment {
 
                 Log.d(TAG, "官方 JNI 解析成功，波长数量: " + results.getLength());
 
-                // TODO: 模拟显示结果，后续可在此处替换为你真实的识别逻辑
-                startAnalysisLogic();
+                // TODO: 核心逻辑，将扫描获得的数据发送到django后端并获取分析的结果。
+
+                startAnalysis(results);
             }
         }
     }
@@ -432,23 +446,103 @@ public class AnalysisFragment extends Fragment {
     }
 
 
-    private void startAnalysisLogic() {
+    private void startAnalysis(KSTNanoSDK.ScanResults results) {
+        if(binding == null || results == null) return;
+
         binding.btnStartScan.setEnabled(false);
         binding.btnStartScan.setText(R.string.analysis_scan_analysising);
-        mHandler.postDelayed(() -> {
-            if (binding == null) return;
-            binding.layoutResults.setVisibility(View.VISIBLE);
-            binding.qualityMeterLayout.tvQualityScore.setText(String.valueOf(92));
-            ObjectAnimator.ofInt(binding.qualityMeterLayout.qualityProgressBar, "progress", 0, 92).setDuration(800).start();
 
-            List<ComponentItem> items = new ArrayList<>();
-            items.add(new ComponentItem("蛋白质", String.format(Locale.US, "%.2f", 3.2f), "g/100ml"));
-            items.add(new ComponentItem("脂肪", String.format(Locale.US, "%.2f", 3.8f), "g/100ml"));
-            binding.rvComponents.setAdapter(new ComponentAdapter(items));
+        JSONObject jsonResult = new JSONObject();
+        try {
+            // 关键数据：波长、原始光强、参考光强
+            jsonResult.put("wavelength", new JSONArray(results.getWavelength()));
+            jsonResult.put("intensity", new JSONArray(results.getUncalibratedIntensity()));
+            jsonResult.put("reference", new JSONArray(results.getIntensity()));
+
+            // 可选：添加设备 MAC 或标签
+            jsonResult.put("device_mac", preferredDevice != null ? preferredDevice : "NIRScanNano");
+            jsonResult.put("label", "Milk_Sample");
+
+        } catch (JSONException e) {
+            Log.e("Volley_JSON", "JSON构建失败: " + e.toString());
+            resetScanButton();
+            return;
+        }
+
+        String url = "http://172.22.98.184:18000/api/analysis/predict/";
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonResult,
+                response -> {
+                    // --- 请求成功：解析后端预测的结果 ---
+                    try {
+                        // 假设后端返回: {"protein": 3.2, "fat": 3.8, "score": 92, "suggestion": "..."}
+                        double protein = response.optDouble("protein", 0.0);
+                        double fat = response.optDouble("fat", 0.0);
+                        int score = response.optInt("score", 0);
+                        String suggestion = response.optString("suggestion", "分析完成");
+
+                        // 更新 UI 展现
+                        showResultsUI(protein, fat, score, suggestion);
+                    } catch (Exception e) {
+                        Log.e("Volley_Response", "解析响应失败");
+                        resetScanButton();
+                    }
+                },
+
+                error -> {
+                    // --- 请求失败 ---
+                    Toast.makeText(mContext, "服务器连接失败，请检查后端状态", Toast.LENGTH_SHORT).show();
+                    Log.e("Volley_Error", error.toString());
+                    resetScanButton();
+                }
+        );
+
+        // 5. 加入请求队列 (mQueue 需在 onViewCreated 初始化)
+
+        if (mQueue == null) mQueue = Volley.newRequestQueue(mContext);
+        mQueue.add(request);
+    }
+
+    // TODO:展示结果的UI
+    private void showResultsUI(double protein, double fat, int score, String suggestion) {
+        if (binding == null) return;
+
+        // 显示结果布局
+        binding.layoutResults.setVisibility(View.VISIBLE);
+
+        // 1. 设置质量分数和进度条动画
+        binding.qualityMeterLayout.tvQualityScore.setText(String.valueOf(score));
+        ObjectAnimator.ofInt(binding.qualityMeterLayout.qualityProgressBar, "progress", 0, score)
+                .setDuration(1000)
+                .start();
+
+        // 2. 填充成分列表 (RecyclerView)
+        List<ComponentItem> items = new ArrayList<>();
+        items.add(new ComponentItem("蛋白质", String.format(Locale.US, "%.2f", protein), "g/100ml"));
+        items.add(new ComponentItem("脂肪", String.format(Locale.US, "%.2f", fat), "g/100ml"));
+        binding.rvComponents.setAdapter(new ComponentAdapter(items));
+
+        // 3. 动态添加建议文本 (对应你 XML 里的 container_suggestions)
+        binding.containerSuggestions.removeAllViews(); // 清空旧建议
+        TextView tvSuggestion = new TextView(mContext);
+        tvSuggestion.setText(suggestion);
+        tvSuggestion.setTextColor(ContextCompat.getColor(mContext, R.color.black));
+        binding.containerSuggestions.addView(tvSuggestion);
+
+        // 4. 恢复扫描按钮
+        resetScanButton();
+    }
+
+    // TODO:重置按键状态
+    private void resetScanButton() {
+        if (binding != null) {
 
             binding.btnStartScan.setEnabled(true);
             binding.btnStartScan.setText(getString(R.string.analysis_scan));
 
-        }, 1500);
+        }
     }
 }

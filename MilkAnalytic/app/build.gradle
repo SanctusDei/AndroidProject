@@ -50,6 +50,7 @@ dependencies {
 
     // UbiNIRS 项目所需图表库
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation libs.volley
 
     // 测试相关
     testImplementation "junit:junit:4.13.2"
