@@ -1,4 +1,4 @@
-package utils;
+package Adapter;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.ubi.NanoScan.databinding.ItemComponentBinding;
 import java.util.List;
+
+import utils.ComponentItem;
+
 
 public class ComponentAdapter extends RecyclerView.Adapter<ComponentAdapter.ViewHolder> {
     private final List<ComponentItem> items;

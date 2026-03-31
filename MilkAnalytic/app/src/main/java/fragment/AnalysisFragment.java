@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import utils.ComponentAdapter;
+import Adapter.ComponentAdapter;
 import utils.ComponentItem;
 
 public class AnalysisFragment extends Fragment {
@@ -469,6 +469,16 @@ public class AnalysisFragment extends Fragment {
             return;
         }
 
+        JsonObjectRequest request = getJsonObjectRequest(jsonResult);
+
+        // 5. 加入请求队列 (mQueue 需在 onViewCreated 初始化)
+        if (mQueue == null) mQueue = Volley.newRequestQueue(mContext);
+        mQueue.add(request);
+
+    }
+
+    @NonNull
+    private JsonObjectRequest getJsonObjectRequest(JSONObject jsonResult) {
         String url = "http://172.22.98.184:18000/api/analysis/predict/";
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -499,11 +509,7 @@ public class AnalysisFragment extends Fragment {
                     resetScanButton();
                 }
         );
-
-        // 5. 加入请求队列 (mQueue 需在 onViewCreated 初始化)
-
-        if (mQueue == null) mQueue = Volley.newRequestQueue(mContext);
-        mQueue.add(request);
+        return request;
     }
 
     // TODO:展示结果的UI
