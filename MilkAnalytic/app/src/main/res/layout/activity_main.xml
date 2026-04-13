@@ -44,14 +44,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="牛奶成分分析"
+                        android:text="@string/app_name"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="专业NIR光谱检测系统"
+                        android:text="专属于你的乳制品质量监测平台"
                         android:textColor="#CCFFFFFF"
                         android:textSize="10sp" />
                 </LinearLayout>

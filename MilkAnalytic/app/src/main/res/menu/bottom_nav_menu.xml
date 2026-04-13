@@ -8,6 +8,11 @@
         android:id="@+id/nav_analytic"
         android:icon="@drawable/ic_menu_analysis"
         android:title="分析" />
+
+    <item
+        android:id="@+id/nav_community"
+        android:icon="@drawable/ic_menu_community"
+        android:title="社区" />
     <item
         android:id="@+id/nav_history"
         android:icon="@drawable/ic_menu_history"

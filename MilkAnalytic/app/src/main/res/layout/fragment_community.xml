@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <com.amap.api.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        android:background="#CCFFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView android:text="3" android:textSize="20sp" android:textStyle="bold" android:textColor="#2196F3" android:layout_height="0dp" android:layout_width="0dp" />
+                <TextView android:text="附近商家" android:textSize="12sp"
+                    android:layout_height="0dp" android:layout_width="0dp"/>
+            </LinearLayout>
+
+            <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#DDD" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView android:text="3" android:textSize="20sp" android:textStyle="bold" android:textColor="#FF9800" android:layout_height="0dp" android:layout_width="0dp"/>
+                <TextView android:text="安全商家" android:textSize="12sp" android:layout_height="0dp" android:layout_width="0dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_top_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        app:cardBackgroundColor="#E6FFFFFF" app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_search_box"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="#5F6368" />
+
+                    <EditText
+                        android:id="@+id/et_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:background="@null"
+                        android:hint="搜索附近的商家或地址..."
+                        android:textColorHint="#999999"
+                        android:textSize="14sp"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_locate"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    app:icon="@drawable/ic_navigation"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textStart"
+                    app:backgroundTint="#0066FF"
+                    app:cornerRadius="8dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_map_pin" app:tint="#0066FF"/>
+                    <TextView android:id="@+id/tv_stat_total" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3" android:textSize="18sp" android:textStyle="bold" android:textColor="#1A1A2E"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="附近检测点" android:textSize="12sp" android:textColor="#5F6368"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_check_circle" app:tint="#0066FF"/>
+                    <TextView android:id="@+id/tv_stat_safe" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3" android:textSize="18sp" android:textStyle="bold" android:textColor="#1A1A2E"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="安全商家" android:textSize="12sp" android:textColor="#5F6368"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_users" app:tint="#0066FF"/>
+                    <TextView android:id="@+id/tv_stat_contrib" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="61" android:textSize="18sp" android:textStyle="bold" android:textColor="#1A1A2E"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="社区贡献" android:textSize="12sp" android:textColor="#5F6368"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/ic_plus"
+        app:tint="@android:color/white"
+        app:backgroundTint="#0066FF"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|end" />
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="120dp"
+        app:behavior_hideable="false"
+        android:elevation="16dp">
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_drag_handle" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp">
+
+            <View
+                android:id="@+id/view_title_indicator"
+                android:layout_width="4dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:background="#0066FF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/view_title_indicator"
+                android:layout_marginStart="8dp"
+                android:layout_centerVertical="true"
+                android:text="周边乳品商户信誉榜"
+                android:textColor="#1A1A2E"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_merchant_count_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_badge_blue"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="收录 20 家"
+                android:textColor="#0066FF"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_merchants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="80dp"
+            tools:listitem="@layout/item_merchant_status" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

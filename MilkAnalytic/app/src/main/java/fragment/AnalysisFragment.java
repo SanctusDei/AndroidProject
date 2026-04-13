@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -488,14 +490,20 @@ public class AnalysisFragment extends Fragment {
                 response -> {
                     // --- 请求成功：解析后端预测的结果 ---
                     try {
-                        // 假设后端返回: {"protein": 3.2, "fat": 3.8, "score": 92, "suggestion": "..."}
                         double protein = response.optDouble("protein", 0.0);
                         double fat = response.optDouble("fat", 0.0);
+
+                        // --- 新增：解析乳糖和水分指标 ---
+                        double lactose = response.optDouble("lactose", 0.0);
+                        double waterContent = response.optDouble("water_content", 0.0);
+
+                        // 2. 解析评分与建议
                         int score = response.optInt("score", 0);
                         String suggestion = response.optString("suggestion", "分析完成");
 
-                        // 更新 UI 展现
-                        showResultsUI(protein, fat, score, suggestion);
+                        // 3. 更新 UI (增加参数传递)
+                        // 注意：你需要同步修改 showResultsUI 方法的定义
+                        showResultsUI(protein, fat, lactose, waterContent, score, suggestion);
                     } catch (Exception e) {
                         Log.e("Volley_Response", "解析响应失败");
                         resetScanButton();
@@ -513,35 +521,104 @@ public class AnalysisFragment extends Fragment {
     }
 
     // TODO:展示结果的UI
-    private void showResultsUI(double protein, double fat, int score, String suggestion) {
+    // 增加 lactose 和 waterContent 参数
+    private void showResultsUI(double protein, double fat, double lactose, double waterContent, int score, String suggestion) {
         if (binding == null) return;
 
         // 显示结果布局
         binding.layoutResults.setVisibility(View.VISIBLE);
 
-        // 1. 设置质量分数和进度条动画
+        // 1. 设置质量分数和进度条动画 (增加颜色联动)
         binding.qualityMeterLayout.tvQualityScore.setText(String.valueOf(score));
+
+        // 根据得分改变进度条颜色（可选：及格绿，不及格红）
+        int progressColor = score >= 80 ? Color.GREEN : (score >= 60 ? Color.YELLOW : Color.RED);
+        binding.qualityMeterLayout.qualityProgressBar.setProgressTintList(ColorStateList.valueOf(progressColor));
+
         ObjectAnimator.ofInt(binding.qualityMeterLayout.qualityProgressBar, "progress", 0, score)
                 .setDuration(1000)
                 .start();
 
-        // 2. 填充成分列表 (RecyclerView)
+        // 2. 填充成分列表 (新增乳糖、水分占比)
         List<ComponentItem> items = new ArrayList<>();
         items.add(new ComponentItem("蛋白质", String.format(Locale.US, "%.2f", protein), "g/100ml"));
         items.add(new ComponentItem("脂肪", String.format(Locale.US, "%.2f", fat), "g/100ml"));
+
+        // --- 新增项 ---
+        items.add(new ComponentItem("乳糖", String.format(Locale.US, "%.2f", lactose), "g/100ml"));
+        items.add(new ComponentItem("水分占比", String.format(Locale.US, "%.1f", waterContent), "%"));
+
+        // 如果你还想显示绝对水分克数，可以再加一项
+        // items.add(new ComponentItem("含水量", String.format(Locale.US, "%.1f", waterContent), "g"));
+
         binding.rvComponents.setAdapter(new ComponentAdapter(items));
 
-        // 3. 动态添加建议文本 (对应你 XML 里的 container_suggestions)
-        binding.containerSuggestions.removeAllViews(); // 清空旧建议
+        // 3. 动态添加建议文本 (美化 UI)
+        binding.containerSuggestions.removeAllViews();
         TextView tvSuggestion = new TextView(mContext);
-        tvSuggestion.setText(suggestion);
+        tvSuggestion.setText("💡 AI 分析建议：\n" + suggestion);
+        tvSuggestion.setLineSpacing(0, 1.2f); // 增加行间距，更好看
+        tvSuggestion.setPadding(10, 10, 10, 10);
         tvSuggestion.setTextColor(ContextCompat.getColor(mContext, R.color.black));
         binding.containerSuggestions.addView(tvSuggestion);
 
+        updateRadarChart(protein, fat, lactose, waterContent, score);
         // 4. 恢复扫描按钮
         resetScanButton();
     }
 
+
+    private void updateRadarChart(double protein, double fat, double lactose, double waterContent, int score) {
+        if (binding == null) return;
+
+        // 1. 数据归一化处理 (雷达图各轴量程需一致，建议统一转为 0-100 的评分)
+        // 逻辑：蛋白3.2、脂肪3.6、乳糖4.5 左右为满分 100
+        float pScore = (float) Math.min(100, (protein / 3.5) * 100);
+        float fScore = (float) Math.min(100, (fat / 4.0) * 100);
+        float lScore = (float) Math.min(100, (lactose / 5.0) * 100);
+        float wScore = (float) Math.max(0, 100 - (Math.abs(waterContent - 88.0) * 10)); // 偏离88%越多分越低
+        float totalScore = (float) score;
+
+        ArrayList<com.github.mikephil.charting.data.RadarEntry> entries = new ArrayList<>();
+        entries.add(new com.github.mikephil.charting.data.RadarEntry(pScore));
+        entries.add(new com.github.mikephil.charting.data.RadarEntry(fScore));
+        entries.add(new com.github.mikephil.charting.data.RadarEntry(lScore));
+        entries.add(new com.github.mikephil.charting.data.RadarEntry(wScore));
+        entries.add(new com.github.mikephil.charting.data.RadarEntry(totalScore));
+
+        com.github.mikephil.charting.data.RadarDataSet dataSet = new com.github.mikephil.charting.data.RadarDataSet(entries, "指标评分");
+
+        // 2. 样式美化 (使用你项目里的 kst_red 或品牌蓝)
+        int themeColor = ContextCompat.getColor(mContext, R.color.kst_red);
+        dataSet.setColor(themeColor); // 线条颜色
+        dataSet.setFillColor(themeColor); // 填充颜色
+        dataSet.setDrawFilled(true); // 开启填充
+        dataSet.setFillAlpha(100); // 透明度
+        dataSet.setLineWidth(2f);
+        dataSet.setDrawHighlightCircleEnabled(true);
+
+        com.github.mikephil.charting.data.RadarData data = new com.github.mikephil.charting.data.RadarData(dataSet);
+        data.setValueTextSize(8);
+        data.setDrawValues(false); // 不在点上显示具体数值，显得干净
+
+        // 3. 配置 Chart 坐标轴与标签
+        binding.radarChart.setData(data);
+        binding.radarChart.getDescription().setEnabled(false); // 隐藏右下角描述
+
+        // 自定义 X 轴标签
+        String[] labels = {"蛋白质", "脂肪", "乳糖", "纯净度", "综合"};
+        binding.radarChart.getXAxis().setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(labels));
+        binding.radarChart.getXAxis().setTextColor(Color.BLACK);
+
+        // Y 轴（蜘蛛网的层级）
+        binding.radarChart.getYAxis().setAxisMinimum(0f);
+        binding.radarChart.getYAxis().setAxisMaximum(100f); // 固定量程 0-100
+        binding.radarChart.getYAxis().setLabelCount(5, false);
+        binding.radarChart.getYAxis().setDrawLabels(false); // 隐藏内部数字
+
+        binding.radarChart.animateXY(1000, 1000); // 炫酷的展开动画
+        binding.radarChart.invalidate(); // 刷新
+    }
     // TODO:重置按键状态
     private void resetScanButton() {
         if (binding != null) {

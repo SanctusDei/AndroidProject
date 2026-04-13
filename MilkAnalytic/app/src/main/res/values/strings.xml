@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">牛奶成分分析APP</string>
+    <string name="app_name">乳卫士</string>
     <string name="menu_search">搜索</string>
     <string name="menu_notifications">通知</string>
     <string name="menu_settings">设置</string>

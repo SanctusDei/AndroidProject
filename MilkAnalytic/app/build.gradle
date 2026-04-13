@@ -33,6 +33,11 @@ android {
 }
 
 dependencies {
+
+    // 高德地图 3D 核心库
+    implementation 'com.amap.api:3dmap:latest.integration'
+
+
     // 基础核心组件：固定在支持 SDK 34 的版本
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.google.android.material:material:1.11.0"
