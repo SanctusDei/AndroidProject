@@ -64,7 +64,8 @@ public class SpectrumDetailFragment extends Fragment {
     }
 
     private void fetchSpectrumDetail() {
-        String url = "http://172.22.98.184:18000/api/spectrum/" + recordId + "/";
+
+        String url = "http://" + getString(R.string.severUrl) + ":18000/api/spectrum/" + recordId + "/";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
