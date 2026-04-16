@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+    // Retrofit 网络请求与 Gson 解析器
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
     implementation("androidx.compose.material:material-icons-extended")

@@ -38,13 +38,18 @@ import com.example.zhiwu.service.NanoBLEService
 import com.kstechnologies.nirscannanolibrary.KSTNanoSDK
 
 data class AnalysisData(
-    val protein: Double,
-    val fat: Double,
-    val lactose: Double,
-    val waterContent: Double,
+    val cotton: Double,
+    val polyester: Double,
+    val spandex: Double,
+    val wool: Double,
     val score: Int,
     val suggestion: String
 )
+
+// 🚨 终极绝杀：彻底抛弃 TI 官方那个容易报 null 的类。
+// 我们直接把最底层的原生字节流保存在全局内存中！
+var globalRefCoeff: ByteArray? = null
+var globalRefMatrix: ByteArray? = null
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -64,16 +69,15 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
     var finalResult by remember { mutableStateOf<AnalysisData?>(null) }
     var showProgressDialog by remember { mutableStateOf(false) }
     var progressTitle by remember { mutableStateOf("") }
-    var progressMax by remember { mutableStateOf(100) }
-    var progressCurrent by remember { mutableStateOf(0) }
+    var progressMax by remember { mutableIntStateOf(100) }
+    var progressCurrent by remember { mutableIntStateOf(0) }
 
-    // ================= 新增：动态权限管理 =================
-    // 1. 根据 Android 版本决定需要申请哪些权限
     val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION)
     } else {
         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     }
+
     val scanCallback = remember {
         object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -82,39 +86,42 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                     nanoBLEService?.connect(device.address)
                     isConnected = true
                     isSearching = false
-                    leScanner?.stopScan(this)
+                    try {
+                        leScanner?.stopScan(this)
+                    } catch (e: SecurityException) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }
     }
-    // 2. 注册权限申请弹窗的回调
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { grantedMap ->
         if (grantedMap.values.all { it }) {
-            // 用户点击了“允许”
             if (bluetoothAdapter?.isEnabled == true) {
                 isSearching = true
-                leScanner?.startScan(scanCallback) // <- 现在调用就不会闪退了！
-                coroutineScope.launch {
-                    delay(10000)
-                    if (isSearching) {
-                        isSearching = false
-                        leScanner?.stopScan(scanCallback)
-                        Toast.makeText(context, "搜索超时", Toast.LENGTH_SHORT).show()
+                try {
+                    leScanner?.startScan(scanCallback)
+                    coroutineScope.launch {
+                        delay(10000)
+                        if (isSearching) {
+                            isSearching = false
+                            try { leScanner?.stopScan(scanCallback) } catch (e: SecurityException) { }
+                            Toast.makeText(context, "搜索超时", Toast.LENGTH_SHORT).show()
+                        }
                     }
+                } catch (e: SecurityException) {
+                    Toast.makeText(context, "系统拒绝扫描：请去设置检查位置和蓝牙权限", Toast.LENGTH_LONG).show()
                 }
             } else {
                 Toast.makeText(context, "请先在手机系统设置中打开蓝牙", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // 用户点击了“拒绝”
             Toast.makeText(context, "需要授予蓝牙和位置权限才能搜索设备", Toast.LENGTH_SHORT).show()
         }
     }
-    // ======================================================
-
-
 
     DisposableEffect(context) {
         val serviceConnection = object : ServiceConnection {
@@ -129,7 +136,6 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
 
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                // ... (原有广播接收逻辑不变) ...
                 when (intent?.action) {
                     KSTNanoSDK.ACTION_GATT_CONNECTED -> {
                         isConnected = true
@@ -169,6 +175,22 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                             }
                         }
                     }
+
+                    // 🚨 终极修复：进度条走完后，直接将原生的字节流 (ByteArray) 拦截并全局保存！
+                    KSTNanoSDK.REF_CONF_DATA -> {
+                        try {
+                            globalRefCoeff = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_REF_COEF_DATA)
+                            globalRefMatrix = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_REF_MATRIX_DATA)
+
+                            if (globalRefCoeff != null && globalRefMatrix != null) {
+                                Log.d("Analysis", "✅ 原生校准矩阵碎片已成功拦截并缓存！")
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            Log.e("Analysis", "拦截校准矩阵失败: ${e.message}")
+                        }
+                    }
+
                     KSTNanoSDK.SCAN_CONF_DATA -> {
                         showProgressDialog = false
                         buttonEnabled = true
@@ -180,14 +202,60 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                     }
                     KSTNanoSDK.SCAN_DATA -> {
                         val scanData = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_DATA)
-                        if (scanData != null) {
-                            buttonText = "正在分析数据..."
+
+                        // 🚨 绕过 Kotlin 的 null 洁癖机制：
+                        // 不再去读那个恶心的 currentCalibration，直接判断我们拦截到的原生字节流在不在！
+                        if (scanData != null && globalRefCoeff != null && globalRefMatrix != null) {
+                            buttonText = "正在解析真实光谱数据..."
+
                             coroutineScope.launch {
-                                delay(2000)
-                                finalResult = AnalysisData(3.2, 3.8, 4.5, 88.0, 92, "该织物样本指标优秀，各项成分均衡。")
-                                buttonEnabled = true
-                                buttonText = "开始新的光谱扫描"
+                                try {
+                                    // 🌟 直接把我们缓存的两个 ByteArray 喂给 C++ 解析库！完美避开 Java 包装层！
+                                    val results = KSTNanoSDK.KSTNanoSDK_dlpSpecScanInterpReference(
+                                        scanData, globalRefCoeff, globalRefMatrix
+                                    )
+
+                                    if (results == null) {
+                                        Toast.makeText(context, "解析失败：C++算法库返回了空数据", Toast.LENGTH_LONG).show()
+                                        return@launch
+                                    }
+
+                                    val request = com.example.zhiwu.network.PredictRequest(
+                                        wavelength = results.wavelength.map { it.toDouble() },
+                                        intensity = results.uncalibratedIntensity.map { it.toDouble() },
+                                        reference = results.intensity.map { it.toDouble() },
+                                        device_mac = "NIRScan_Nano_Real",
+                                        label = "真实织物扫描"
+                                    )
+
+                                    val response = com.example.zhiwu.network.ApiClient.retrofit.predictSpectrum(request)
+
+                                    if (response.status == "success") {
+                                        finalResult = AnalysisData(
+                                            cotton = response.cotton,
+                                            polyester = response.polyester,
+                                            spandex = response.spandex,
+                                            wool = response.wool,
+                                            score = response.score,
+                                            suggestion = response.suggestion
+                                        )
+                                        Toast.makeText(context, "🎉 分析成功！", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "服务器解析失败: ${response.message}", Toast.LENGTH_LONG).show()
+                                    }
+                                } catch (e: Throwable) {
+                                    e.printStackTrace()
+                                    Toast.makeText(context, "发生崩溃: ${e.message}", Toast.LENGTH_LONG).show()
+                                    Log.e("Analysis", "Scan/Network error: ${e.message}")
+                                } finally {
+                                    buttonEnabled = true
+                                    buttonText = "开始新的光谱扫描"
+                                }
                             }
+                        } else {
+                            Toast.makeText(context, "缺失校准矩阵！请断开蓝牙后重新连接，并等待进度条走完", Toast.LENGTH_LONG).show()
+                            buttonEnabled = true
+                            buttonText = "开始光谱扫描"
                         }
                     }
                 }
@@ -204,13 +272,14 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
             addAction(KSTNanoSDK.SCAN_CONF_DATA)
             addAction(NanoBLEService.ACTION_SCAN_STARTED)
             addAction(KSTNanoSDK.SCAN_DATA)
+            addAction(KSTNanoSDK.REF_CONF_DATA)
         }
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter)
 
         onDispose {
             context.unbindService(serviceConnection)
             LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
-            leScanner?.stopScan(scanCallback)
+            try { leScanner?.stopScan(scanCallback) } catch (e: SecurityException) { }
         }
     }
 
@@ -244,39 +313,38 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                     }
                 }
 
-                // ================= 新增：按钮点击时的权限校验 =================
                 OutlinedButton(onClick = {
                     if (isConnected) {
                         nanoBLEService?.disconnect()
                     } else {
-                        // 检查是否已经给了权限
                         val allPermissionsGranted = bluetoothPermissions.all {
                             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
                         }
 
                         if (allPermissionsGranted) {
-                            // 有权限，直接开扫
                             if (bluetoothAdapter?.isEnabled == true) {
                                 isSearching = true
-                                leScanner?.startScan(scanCallback)
-                                coroutineScope.launch {
-                                    delay(10000)
-                                    if (isSearching) {
-                                        isSearching = false
-                                        leScanner?.stopScan(scanCallback)
-                                        Toast.makeText(context, "搜索超时", Toast.LENGTH_SHORT).show()
+                                try {
+                                    leScanner?.startScan(scanCallback)
+                                    coroutineScope.launch {
+                                        delay(10000)
+                                        if (isSearching) {
+                                            isSearching = false
+                                            try { leScanner?.stopScan(scanCallback) } catch (e: SecurityException) {}
+                                            Toast.makeText(context, "搜索超时", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
+                                } catch (e: SecurityException) {
+                                    Toast.makeText(context, "系统拒绝扫描，缺少底层权限", Toast.LENGTH_SHORT).show()
                                 }
                             } else {
                                 Toast.makeText(context, "请先在手机设置中打开蓝牙", Toast.LENGTH_SHORT).show()
                             }
                         } else {
-                            // 没权限，唤起系统弹窗向用户要权限！
                             permissionLauncher.launch(bluetoothPermissions)
                         }
                     }
                 }) { Text(if (isConnected) "断开" else "搜索设备") }
-                // ============================================================
             }
         }
 
@@ -289,19 +357,19 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(finalResult!!.score.toString(), style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                        Text("综合评分", style = MaterialTheme.typography.labelSmall)
+                        Text("综合置信度", style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ComponentCard("蛋白质", "${finalResult!!.protein} g", modifier = Modifier.weight(1f))
-                ComponentCard("脂肪", "${finalResult!!.fat} g", modifier = Modifier.weight(1f))
+                ComponentCard("纯棉 (Cotton)", "${finalResult!!.cotton} %", modifier = Modifier.weight(1f))
+                ComponentCard("聚酯纤维 (Polyester)", "${finalResult!!.polyester} %", modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ComponentCard("乳糖", "${finalResult!!.lactose} g", modifier = Modifier.weight(1f))
-                ComponentCard("水分占比", "${finalResult!!.waterContent} %", modifier = Modifier.weight(1f))
+                ComponentCard("氨纶 (Spandex)", "${finalResult!!.spandex} %", modifier = Modifier.weight(1f))
+                ComponentCard("羊毛 (Wool)", "${finalResult!!.wool} %", modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text("💡 智能建议：${finalResult!!.suggestion}", style = MaterialTheme.typography.bodyMedium)
