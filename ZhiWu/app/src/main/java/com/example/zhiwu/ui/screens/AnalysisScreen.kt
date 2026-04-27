@@ -37,17 +37,18 @@ import kotlinx.coroutines.launch
 import com.example.zhiwu.service.NanoBLEService
 import com.kstechnologies.nirscannanolibrary.KSTNanoSDK
 
+// 🚨 升级1：更新数据类，匹配后端的 6 大门派
 data class AnalysisData(
     val cotton: Double,
     val polyester: Double,
-    val spandex: Double,
     val wool: Double,
+    val nylon: Double,
+    val acrylic: Double,
+    val acetate: Double,
     val score: Int,
     val suggestion: String
 )
 
-// 🚨 终极绝杀：彻底抛弃 TI 官方那个容易报 null 的类。
-// 我们直接把最底层的原生字节流保存在全局内存中！
 var globalRefCoeff: ByteArray? = null
 var globalRefMatrix: ByteArray? = null
 
@@ -175,8 +176,6 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                             }
                         }
                     }
-
-                    // 🚨 终极修复：进度条走完后，直接将原生的字节流 (ByteArray) 拦截并全局保存！
                     KSTNanoSDK.REF_CONF_DATA -> {
                         try {
                             globalRefCoeff = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_REF_COEF_DATA)
@@ -190,7 +189,6 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                             Log.e("Analysis", "拦截校准矩阵失败: ${e.message}")
                         }
                     }
-
                     KSTNanoSDK.SCAN_CONF_DATA -> {
                         showProgressDialog = false
                         buttonEnabled = true
@@ -203,14 +201,11 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                     KSTNanoSDK.SCAN_DATA -> {
                         val scanData = intent.getByteArrayExtra(KSTNanoSDK.EXTRA_DATA)
 
-                        // 🚨 绕过 Kotlin 的 null 洁癖机制：
-                        // 不再去读那个恶心的 currentCalibration，直接判断我们拦截到的原生字节流在不在！
                         if (scanData != null && globalRefCoeff != null && globalRefMatrix != null) {
                             buttonText = "正在解析真实光谱数据..."
 
                             coroutineScope.launch {
                                 try {
-                                    // 🌟 直接把我们缓存的两个 ByteArray 喂给 C++ 解析库！完美避开 Java 包装层！
                                     val results = KSTNanoSDK.KSTNanoSDK_dlpSpecScanInterpReference(
                                         scanData, globalRefCoeff, globalRefMatrix
                                     )
@@ -231,11 +226,14 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                                     val response = com.example.zhiwu.network.ApiClient.retrofit.predictSpectrum(request)
 
                                     if (response.status == "success") {
+                                        // 🚨 升级2：正确映射后端的 6 种成分
                                         finalResult = AnalysisData(
                                             cotton = response.cotton,
                                             polyester = response.polyester,
-                                            spandex = response.spandex,
                                             wool = response.wool,
+                                            nylon = response.nylon,
+                                            acrylic = response.acrylic,
+                                            acetate = response.acetate,
                                             score = response.score,
                                             suggestion = response.suggestion
                                         )
@@ -253,7 +251,7 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "缺失校准矩阵！请断开蓝牙后重新连接，并等待进度条走完", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "缺失校准矩阵！请断开蓝牙后重新连接", Toast.LENGTH_LONG).show()
                             buttonEnabled = true
                             buttonText = "开始光谱扫描"
                         }
@@ -320,23 +318,12 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                         val allPermissionsGranted = bluetoothPermissions.all {
                             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
                         }
-
                         if (allPermissionsGranted) {
                             if (bluetoothAdapter?.isEnabled == true) {
                                 isSearching = true
                                 try {
                                     leScanner?.startScan(scanCallback)
-                                    coroutineScope.launch {
-                                        delay(10000)
-                                        if (isSearching) {
-                                            isSearching = false
-                                            try { leScanner?.stopScan(scanCallback) } catch (e: SecurityException) {}
-                                            Toast.makeText(context, "搜索超时", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                } catch (e: SecurityException) {
-                                    Toast.makeText(context, "系统拒绝扫描，缺少底层权限", Toast.LENGTH_SHORT).show()
-                                }
+                                } catch (e: SecurityException) { }
                             } else {
                                 Toast.makeText(context, "请先在手机设置中打开蓝牙", Toast.LENGTH_SHORT).show()
                             }
@@ -362,16 +349,33 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ComponentCard("纯棉 (Cotton)", "${finalResult!!.cotton} %", modifier = Modifier.weight(1f))
-                ComponentCard("聚酯纤维 (Polyester)", "${finalResult!!.polyester} %", modifier = Modifier.weight(1f))
+
+            // 🚨 升级3：智能动态渲染列表！
+            // 把所有成分组装成列表 -> 过滤掉 0% 的 -> 按占比从大到小排序
+            val validComponents = listOf(
+                "纯棉 (Cotton)" to finalResult!!.cotton,
+                "聚酯纤维 (Polyester)" to finalResult!!.polyester,
+                "羊毛 (Wool)" to finalResult!!.wool,
+                "尼龙 (Nylon)" to finalResult!!.nylon,
+                "腈纶 (Acrylic)" to finalResult!!.acrylic,
+                "醋酸纤维 (Acetate)" to finalResult!!.acetate
+            ).filter { it.second > 0.0 }.sortedByDescending { it.second }
+
+            // 动态构建两列网格布局
+            validComponents.chunked(2).forEach { rowItems ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    ComponentCard(rowItems[0].first, "${rowItems[0].second} %", modifier = Modifier.weight(1f))
+                    if (rowItems.size > 1) {
+                        ComponentCard(rowItems[1].first, "${rowItems[1].second} %", modifier = Modifier.weight(1f))
+                    } else {
+                        // 补齐占位符，保持排版工整
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ComponentCard("氨纶 (Spandex)", "${finalResult!!.spandex} %", modifier = Modifier.weight(1f))
-                ComponentCard("羊毛 (Wool)", "${finalResult!!.wool} %", modifier = Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(24.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text("💡 智能建议：${finalResult!!.suggestion}", style = MaterialTheme.typography.bodyMedium)
         }
 

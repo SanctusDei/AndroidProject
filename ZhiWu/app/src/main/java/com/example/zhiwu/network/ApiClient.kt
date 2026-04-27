@@ -19,13 +19,16 @@ data class PredictRequest(
 data class PredictResponse(
     val status: String,
     val record_id: Int?,
+    val label: String?,
     val cotton: Double,
     val polyester: Double,
-    val spandex: Double,
     val wool: Double,
+    val nylon: Double,    // 新增
+    val acrylic: Double,  // 新增
+    val acetate: Double,  // 新增
     val score: Int,
     val suggestion: String,
-    val message: String?
+    val message: String? = null
 )
 
 
