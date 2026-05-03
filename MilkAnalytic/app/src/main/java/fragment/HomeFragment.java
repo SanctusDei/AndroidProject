@@ -69,7 +69,8 @@ public class HomeFragment extends Fragment {
 
     // TODO
     private void fetchDashboardData() {
-        String url = "http://172.22.98.184:18000/api/dashboard/";
+
+        String url = "http://"+ getString(R.string.severUrl) +":18000/api/dashboard/";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,

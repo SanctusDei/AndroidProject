@@ -227,5 +227,6 @@
     <string name="analysis_ble_prefer_searching">搜索首选设备...</string>
     <string name="analysis_scan_analysising">分析中...</string>
 
+    <string name="severUrl">10.224.176.184</string>
 
 </resources>

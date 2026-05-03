@@ -40,6 +40,23 @@ android {
 }
 
 dependencies {
+    // Markdown 渲染库 (推荐使用 jeziellago 的版本，对 Compose 兼容性较好)
+    // 这个版本在 MavenCentral 上，下载更稳定
+    implementation("dev.jeziellago:compose-markdown:0.5.0")
+    // Retrofit 网络请求与 Gson 解析器
+    // 1. 网络请求核心：Retrofit 与 Gson 解析器
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // 2. 状态管理：让 ViewModel 完美支持 Compose UI
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    // 3. 底层通信：本地广播 (为了兼容你发给我的那个 TI 官方底层 SDK)
+    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

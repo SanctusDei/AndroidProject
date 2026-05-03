@@ -42,7 +42,6 @@ public class SettingsFragment extends Fragment {
         String[] themes = {"浅色", "深色", "跟随系统"};
         ArrayAdapter<String> themeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, themes);
         binding.selectTheme.setAdapter(themeAdapter);
-
         // 图表样式选择
         String[] charts = {"现代", "经典", "简约"};
         ArrayAdapter<String> chartAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, charts);

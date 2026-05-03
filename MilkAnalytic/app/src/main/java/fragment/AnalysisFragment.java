@@ -481,7 +481,8 @@ public class AnalysisFragment extends Fragment {
 
     @NonNull
     private JsonObjectRequest getJsonObjectRequest(JSONObject jsonResult) {
-        String url = "http://172.22.98.184:18000/api/analysis/predict/";
+
+        String url = "http://" + getString(R.string.severUrl) + ":18000/api/analysis/predict/";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,

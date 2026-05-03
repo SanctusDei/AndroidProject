@@ -77,7 +77,7 @@ public class HistoryFragment extends Fragment {
     } // 修复：之前这里缺少结束括号
 
     private void fetchHistoryData() {
-        String url = "http://172.22.98.184:18000/api/history/";
+        String url = "http://"+getString(R.string.severUrl)+":18000/api/history/";
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET, url, null,
