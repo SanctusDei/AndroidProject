@@ -1,5 +1,6 @@
 package com.example.zhiwu.ui.screens
 
+import com.example.zhiwu.network.ApiClient
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
@@ -223,7 +224,7 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
                                         label = "真实织物扫描"
                                     )
 
-                                    val response = com.example.zhiwu.network.ApiClient.retrofit.predictSpectrum(request)
+                                    val response = ApiClient.api.predictSpectrum(request)
 
                                     if (response.status == "success") {
                                         // 🚨 升级2：正确映射后端的 6 种成分

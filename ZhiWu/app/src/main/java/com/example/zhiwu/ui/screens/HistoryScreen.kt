@@ -1,4 +1,6 @@
 package com.example.zhiwu.ui.screens
+// 导入网络请求客户端
+
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +33,7 @@ fun HistoryScreen(modifier: Modifier = Modifier) {
         errorMessage = null
         try {
             // 调用刚写好的网络接口
-            val response = ApiClient.retrofit.getHistory()
+            val response = ApiClient.api.getHistory()
             if (response.status == "success") {
                 // 🚨 修复区：将后端数据映射成你的 HistoryInfo UI 模型，使用正确的参数名
                 historyList = response.data.map { item ->

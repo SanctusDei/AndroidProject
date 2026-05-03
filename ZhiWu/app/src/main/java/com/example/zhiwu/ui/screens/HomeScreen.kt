@@ -31,7 +31,7 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         isLoading = true
         try {
-            val response = ApiClient.retrofit.getDashboardData()
+            val response = ApiClient.api.getDashboardData()
 
             totalScans = response.total_scans
 

@@ -19,9 +19,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
     }
 }
 
 rootProject.name = "ZhiWu"
 include(":app")
- 
