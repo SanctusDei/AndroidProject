@@ -1,6 +1,6 @@
 package com.example.zhiwu.ui.screens
 
-import dev.jeziellago.compose.markdown.MarkdownText
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.zhiwu.AgentViewModel
 import com.example.zhiwu.ChatMessage
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun AgentScreen(viewModel: AgentViewModel, modifier: Modifier = Modifier) {
@@ -108,12 +109,12 @@ fun ChatBubble(message: ChatMessage) {
                         }
                     } else {
                         // 👇 这里是关键修改：使用 MarkdownText 渲染结果
+                        // 👇 这里是关键修改：将 color 合并到 style 中
                         MarkdownText(
                             markdown = message.text,
-                            color = textColor,
-                            style = MaterialTheme.typography.bodyMedium,
-                            // 如果你想让链接可以点击，可以加上：
-                            disableNames = true
+                            style = MaterialTheme.typography.bodyMedium.copy(color = textColor)
+                            // 注意：删除了单独的 color = ...
+                            // 同时建议去掉 disableNames = true (如果是盲加的属性，最新版可能也不支持)
                         )
                     }
                 }

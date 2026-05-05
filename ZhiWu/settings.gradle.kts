@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://jitpack.io") } // 🚨 关键：下载 com.github 库的地方
         maven { url = uri("https://maven.aliyun.com/repository/public") }
     }
 }

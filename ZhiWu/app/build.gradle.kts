@@ -42,7 +42,7 @@ android {
 dependencies {
     // Markdown 渲染库 (推荐使用 jeziellago 的版本，对 Compose 兼容性较好)
     // 这个版本在 MavenCentral 上，下载更稳定
-    implementation("dev.jeziellago:compose-markdown:0.5.0")
+    implementation("com.github.jeziellago:compose-markdown:0.5.8")
     // Retrofit 网络请求与 Gson 解析器
     // 1. 网络请求核心：Retrofit 与 Gson 解析器
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
